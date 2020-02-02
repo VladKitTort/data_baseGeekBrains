@@ -67,6 +67,8 @@ BEGIN
   end if;
 end;
 
+
+
 CREATE TRIGGER against_four_hollows_insert BEFORE update ON products
 FOR EACH ROW
 BEGIN
