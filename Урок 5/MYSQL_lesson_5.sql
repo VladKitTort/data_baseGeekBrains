@@ -24,13 +24,12 @@
 
 -- Заполняем столбец value в таблице storehouses_products.
 
-
 -- INSERT INTO storehouses_products
 --   (value)
 -- values (250), (0), (750), (2050), (0),
 -- 		(2500), (5000), (0), (1250), (11250);
 
--- НЕ ДОДЕЛАНО select distinct id, value from storehouses_products order by value=0;
+-- select distinct id, value from storehouses_products order by IF (value > 0, 0, 1), value;
 
 
 -- Задание №4.
@@ -48,7 +47,7 @@
 
 -- select DATE_FORMAT(DATE_ADD(birthday_at, INTERVAL (TIMESTAMPDIFF(YEAR, birthday_at, now())) year), '%W')
 -- 	as 'weekday', count('Количество дней рождения в дне недели')
--- 	from users group by weekday;
+--	from users group by weekday;
 
 
 
