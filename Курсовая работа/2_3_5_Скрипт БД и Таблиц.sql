@@ -10,7 +10,7 @@ CREATE TABLE users (
 	id SERIAL PRIMARY KEY,
 	email VARCHAR(70) unique NOT NULL,
 	phone bigint(20) unique,
-	INDEX users_phone_idx(phone)
+	INDEX user_phone_idx(phone)
 );
 
 INSERT INTO users
@@ -36,8 +36,8 @@ values
 	('cassin.demetrius@example.org','22'),
 	('blick.shanna@example.com','370');
 
-DROP TABLE IF EXISTS authorization; -- Данные для авторизации.
-CREATE TABLE authorization (
+DROP TABLE IF EXISTS authorizations; -- Данные для авторизации.
+CREATE TABLE authorizations (
 	authorization_id SERIAL PRIMARY KEY,
 	login VARCHAR(50) unique NOT NULL,
 	password_login VARCHAR(50) NOT null,
@@ -45,7 +45,7 @@ CREATE TABLE authorization (
 	FOREIGN KEY (authorization_id) REFERENCES users(id)
 );
 
-INSERT INTO authorization
+INSERT INTO authorizations
 	(authorization_id, login, password_login)
 values
 	('1', 'Jordred', '123456'),
@@ -72,23 +72,23 @@ values
 DROP TABLE IF EXISTS photo; -- картинки.
 CREATE TABLE photo (
 	photo_id SERIAL PRIMARY KEY,
-    photo_users_id BIGINT UNSIGNED,
+    photo_user_id BIGINT UNSIGNED,
     filename VARCHAR(255),
     size INT,
 	metadata JSON,
     created_at DATETIME DEFAULT NOW(),
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX photo_filename_idx(filename),
-    FOREIGN KEY (photo_users_id) REFERENCES users(id)
+    FOREIGN KEY (photo_user_id) REFERENCES users(id)
 );
 
 INSERT INTO photo
-	(photo_id, photo_users_id, filename, size, metadata)
+	(photo_id, photo_user_id, filename, size, metadata)
 values
 	('1', null, 'Lol', '11', null);
 
 INSERT INTO photo
-	(photo_users_id, filename, size, metadata)
+	(photo_user_id, filename, size, metadata)
 values
 	('2', 'fgdfg', '12', null),
 	('4', 'dfgdfg', '13', null),
@@ -102,8 +102,8 @@ values
 	('3', 'eee', '12', null);
 
 
-DROP TABLE IF EXISTS account; -- Авторизованные пользователи
-CREATE TABLE account (
+DROP TABLE IF EXISTS accounts; -- Авторизованные пользователи
+CREATE TABLE accounts (
 	account_id SERIAL PRIMARY KEY,
 	firstname VARCHAR(50),
     lastname VARCHAR(50),
@@ -118,47 +118,47 @@ CREATE TABLE account (
     FOREIGN KEY (account_photo_id) REFERENCES photo(photo_id)
 );
 
-INSERT INTO account
-	(account_id, firstname, lastname, gender, birthday, account_photo_id, hometown)
+INSERT INTO accounts
+	(account_id, firstname, lastname, gender, birthday, author, account_photo_id, hometown)
 values
-	('1', 'Владимир', 'Темченко', 'm', '1970-04-14', '1', 'Усть-Джегута'),
-	('2', 'Герман', 'Алчевский', 'm', '1993-07-16', '2', 'Петров Вал'),
-	('3', 'Яков', 'Кабанов', 'm', '1980-02-03', '11', 'Павловск'),
-	('4', 'Устин', 'Медведев', 'm', '1974-11-24', '3', 'Красноярск–45'),
-	('5', 'Антон', 'Никитин', 'm', '1993-02-02', '1', 'Олёкминск'),
-	('6', 'Трофим', 'Степанов', 'm', '1976-01-12', '4', 'Кондрово'),
-	('7', 'Роман', 'Громов', 'm', '1985-07-08', '1', 'Губаха'),
-	('8', 'Чеслав', 'Шаров', 'm', '1992-10-09', '5', 'Мамоново'),
-	('9', 'Илья', 'Кириллов', 'm', '1997-11-16', '1', 'Тихорецк'),
-	('10', 'Зураб', 'Куликов', 'm', '1991-11-04', '6', 'Архангельск'),
-	('11', 'Тамара', 'Федотова', 'w', '1974-09-01', '1', 'Тулун'),
-	('12', 'Анфиса', 'Фомина', 'w', '1992-08-26', '7', 'Каменногорск'),
-	('13', 'Олеся', 'Бердник', 'w', '1992-09-08', '1', 'Черепаново'),
-	('14', 'Дарья', 'Федосеева', 'w', '1998-03-21', '8', 'Грязи'),
-	('15', 'Зинаида ', 'Кошелева', 'w', '1998-08-02', '1', 'Дно'),
-	('16', 'Дина', 'Гребневска', 'w', '1995-11-28', '9', 'Старая Русса'),
-	('17', 'Юнона', 'Игнатова', 'w', '1987-12-14', '1', 'Черкесск'),
-	('18', 'София', 'Павлик', 'w', '1982-01-31', '10', 'Пущино'),
-	('19', 'Доминика', 'Фомина', 'w', '1995-09-10', '1', 'Диксон');
+	('1', 'Владимир', 'Темченко', 'm', '1970-04-14', '0', '1', 'Усть-Джегута'),
+	('2', 'Герман', 'Алчевский', 'm', '1993-07-16', '1', '2', 'Петров Вал'),
+	('3', 'Яков', 'Кабанов', 'm', '1980-02-03', '0', '11', 'Павловск'),
+	('4', 'Устин', 'Медведев', 'm', '1974-11-24', '0', '3', 'Красноярск–45'),
+	('5', 'Антон', 'Никитин', 'm', '1993-02-02', '0', '1', 'Олёкминск'),
+	('6', 'Трофим', 'Степанов', 'm', '1976-01-12', '1', '4', 'Кондрово'),
+	('7', 'Роман', 'Громов', 'm', '1985-07-08', '0', '1', 'Губаха'),
+	('8', 'Чеслав', 'Шаров', 'm', '1992-10-09', '0', '5', 'Мамоново'),
+	('9', 'Илья', 'Кириллов', 'm', '1997-11-16', '0', '1', 'Тихорецк'),
+	('10', 'Зураб', 'Куликов', 'm', '1991-11-04', '0', '6', 'Архангельск'),
+	('11', 'Тамара', 'Федотова', 'w', '1974-09-01', '0', '1', 'Тулун'),
+	('12', 'Анфиса', 'Фомина', 'w', '1992-08-26', '0', '7', 'Каменногорск'),
+	('13', 'Олеся', 'Бердник', 'w', '1992-09-08', '0', '1', 'Черепаново'),
+	('14', 'Дарья', 'Федосеева', 'w', '1998-03-21', '1', '8', 'Грязи'),
+	('15', 'Зинаида ', 'Кошелева', 'w', '1998-08-02', '0', '1', 'Дно'),
+	('16', 'Дина', 'Гребневска', 'w', '1995-11-28', '0', '9', 'Старая Русса'),
+	('17', 'Юнона', 'Игнатова', 'w', '1987-12-14', '0', '1', 'Черкесск'),
+	('18', 'София', 'Павлик', 'w', '1982-01-31', '0', '10', 'Пущино'),
+	('19', 'Доминика', 'Фомина', 'w', '1995-09-10', '0', '1', 'Диксон');
 
 
 DROP TABLE IF EXISTS authors; -- авторы
 CREATE TABLE authors (
-	authors_id SERIAL PRIMARY KEY,
-	authors_users_id BIGINT UNSIGNED NOT NULL,
-	firstname_authors VARCHAR(50),
-    lastname_authors VARCHAR(50),
+	author_id SERIAL PRIMARY KEY,
+	author_user_id BIGINT UNSIGNED NOT NULL,
+	firstname_author VARCHAR(50),
+    lastname_author VARCHAR(50),
     gender CHAR(1),
 	birthday DATE,
 	account_photo_id BIGINT unsigned default 1,
     number_of_books int, 
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	INDEX account_firstname_authors_lastname_authors_idx(firstname_authors, lastname_authors),
-	FOREIGN KEY (authors_users_id) REFERENCES account(account_id)
+	INDEX account_firstname_author_lastname_author_idx(firstname_author, lastname_author),
+	FOREIGN KEY (author_user_id) REFERENCES accounts(account_id)
 );
 
 INSERT INTO authors
-	(authors_users_id, firstname_authors, lastname_authors, gender, birthday, account_photo_id)
+	(author_user_id, firstname_author, lastname_author, gender, birthday, account_photo_id)
 values
 	('2', 'Герман', 'Алчевский', 'm', '1993-07-16', '2'),
 	('6', 'Трофим', 'Степанов', 'm', '1976-01-12', '4'),
@@ -194,21 +194,21 @@ values
 	('Полный текст'),
 	('Заморожено');
 
-DROP TABLE IF EXISTS artwork; -- обложки для книг
-CREATE TABLE artwork (
+DROP TABLE IF EXISTS artworks; -- обложки для книг
+CREATE TABLE artworks (
 	id SERIAL PRIMARY KEY,
-    artwork_authors_id BIGINT UNSIGNED,
+    artwork_author_id BIGINT UNSIGNED,
     filename VARCHAR(255),
     size INT,
 	metadata JSON,
     created_at DATETIME DEFAULT NOW(),
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX artwork_filename_idx(filename),
-    FOREIGN KEY (artwork_authors_id) REFERENCES authors(authors_users_id) -- Не понял почему не дает поставить authors_id в место authors_users_id ?
+    FOREIGN KEY (artwork_author_id) REFERENCES authors(author_user_id) -- Не понял почему не дает поставить authors_id в место authors_users_id ?
 	);
 
-insert into artwork
-	(artwork_authors_id, filename, size, metadata)
+insert into artworks
+	(artwork_author_id, filename, size, metadata)
 values
 	('2', 'pop.jpg', '12', null),
 	('2', 'pl.jpg', '12', null),
@@ -218,7 +218,7 @@ values
 
 DROP TABLE IF EXISTS genres; -- жанры
 CREATE TABLE genres (
-	genres_id SERIAL PRIMARY KEY,
+	genre_id SERIAL PRIMARY KEY,
 	genre varchar(100)
 );
 
@@ -238,11 +238,11 @@ values
 
 DROP TABLE IF EXISTS sub_geners; -- поджанры
 CREATE TABLE sub_geners (
-	id SERIAL PRIMARY KEY,
+	sub_gener_id SERIAL PRIMARY KEY,
 	genre_id BIGINT UNSIGNED,
 	sub_gener varchar(100),
-	INDEX sub_geners_sub_gener_idx(sub_gener),
-    FOREIGN KEY (genre_id) REFERENCES genres(genres_id)
+	INDEX sub_gener_sub_gener_idx(sub_gener),
+    FOREIGN KEY (genre_id) REFERENCES genres(genre_id)
 );
 
 insert into sub_geners
@@ -270,31 +270,31 @@ values
 
 DROP TABLE IF EXISTS books; -- книги
 CREATE TABLE books (
-	id SERIAL PRIMARY KEY,
+	book_id SERIAL PRIMARY KEY,
 	name_book varchar(100) NOT NULL,
 	description text,
 	text_book text,
 	number_of_pages MEDIUMINT unsigned,
-	author_books_id BIGINT UNSIGNED NOT NULL,
+	author_book_id BIGINT UNSIGNED NOT NULL,
 	censor_age_id BIGINT UNSIGNED NOT NULL,
 	status_id BIGINT UNSIGNED NOT NULL,
 	artwork_id BIGINT UNSIGNED NOT NULL,
 	genre_id BIGINT UNSIGNED NOT NULL,
-	sub_geners_id BIGINT UNSIGNED NOT NULL,
+	sub_gener_id BIGINT UNSIGNED NOT NULL,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	INDEX books_name_book_idx(name_book),
-	INDEX books_status_id_idx(status_id),
-	INDEX books_genre_id_idx(genre_id),
+	INDEX book_name_book_idx(name_book),
+	INDEX book_status_id_idx(status_id),
+	INDEX book_genre_id_idx(genre_id),
 	FOREIGN KEY (censor_age_id) REFERENCES censor_age(id),
 	FOREIGN KEY (status_id) REFERENCES statuses(id),
-	FOREIGN KEY (artwork_id) REFERENCES artwork(id),
-	FOREIGN KEY (genre_id) REFERENCES genres(genres_id),
-	FOREIGN KEY (sub_geners_id) REFERENCES sub_geners(id),
-	FOREIGN KEY (author_books_id) REFERENCES authors(authors_id)
+	FOREIGN KEY (artwork_id) REFERENCES artworks(id),
+	FOREIGN KEY (genre_id) REFERENCES genres(genre_id),
+	FOREIGN KEY (sub_gener_id) REFERENCES sub_geners(sub_gener_id),
+	FOREIGN KEY (author_book_id) REFERENCES authors(author_id)
 );
 
 insert into books
-	(name_book, description, text_book, number_of_pages, author_books_id, censor_age_id, status_id, artwork_id, genre_id, sub_geners_id)
+	(name_book, description, text_book, number_of_pages, author_book_id, censor_age_id, status_id, artwork_id, genre_id, sub_gener_id)
 values
 	('Вася против всех.', null, null, '0', '1', '3', '1', '3', '3', '5'),
 	('Вася и домашний инопланетянин.', null, null, '0', '2', '7', '1', '1', '10', '19'),
@@ -305,7 +305,7 @@ CREATE TABLE books_comments (
 	id SERIAL PRIMARY KEY,
 	book_id BIGINT UNSIGNED NOT NULL,
 	book_comments VARCHAR(150),
-	FOREIGN KEY (book_id) REFERENCES books(id)
+	FOREIGN KEY (book_id) REFERENCES books(book_id)
 );
 
 insert into books_comments
@@ -317,16 +317,16 @@ values
 DROP TABLE IF EXISTS books_like; -- рейтинги книг
 CREATE TABLE books_like(
 	id SERIAL PRIMARY KEY,
-	books_like_book_id BIGINT UNSIGNED NOT NULL,
-	books_like_account_id BIGINT UNSIGNED NOT NULL,
+	book_like_book_id BIGINT UNSIGNED NOT NULL,
+	book_like_account_id BIGINT UNSIGNED NOT NULL,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	INDEX books_like_book_id_idx(books_like_book_id),
-	FOREIGN KEY (books_like_book_id) REFERENCES books(id),
-	FOREIGN KEY (books_like_account_id) REFERENCES account(account_id)
+	INDEX book_like_book_id_idx(book_like_book_id),
+	FOREIGN KEY (book_like_book_id) REFERENCES books(book_id),
+	FOREIGN KEY (book_like_account_id) REFERENCES accounts(account_id)
 );
 
 insert into books_like
-	(books_like_book_id, books_like_account_id)
+	(book_like_book_id, book_like_account_id)
 values
 	('1', '5'),
 	('1', '6'),
@@ -339,16 +339,16 @@ values
 DROP TABLE IF EXISTS authors_like; -- рейтинги книг
 CREATE TABLE authors_like(
 	id SERIAL PRIMARY KEY,
-	authors_like_author_id BIGINT UNSIGNED NOT NULL,
-	books_like_account_id BIGINT UNSIGNED NOT NULL,
+	author_like_author_id BIGINT UNSIGNED NOT NULL,
+	book_like_account_id BIGINT UNSIGNED NOT NULL,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	INDEX authors_like_author_idx(authors_like_author_id),
-	FOREIGN KEY (authors_like_author_id) REFERENCES authors(authors_id),
-	FOREIGN KEY (books_like_account_id) REFERENCES account(account_id)
+	INDEX author_like_author_idx(author_like_author_id),
+	FOREIGN KEY (author_like_author_id) REFERENCES authors(author_id),
+	FOREIGN KEY (book_like_account_id) REFERENCES accounts(account_id)
 );
 
 insert into authors_like
-	(authors_like_author_id, books_like_account_id)
+	(author_like_author_id, book_like_account_id)
 values
 	('1', '5'),
 	('3', '16'),
@@ -360,19 +360,19 @@ values
 
 DROP TABLE IF EXISTS blogs; -- блоги писателей
 CREATE TABLE blogs (
-	id SERIAL PRIMARY KEY,
-	blogs_author_id BIGINT UNSIGNED NOT NULL,
+	blog_id SERIAL PRIMARY KEY,
+	blog_author_id BIGINT UNSIGNED NOT NULL,
 	article varchar(200),
 	text_blog text,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	FOREIGN KEY (blogs_author_id) REFERENCES authors(authors_id)
+	FOREIGN KEY (blog_author_id) REFERENCES authors(author_id)
 );
 
 insert into blogs
-	(blogs_author_id, article, text_blog)
+	(blog_author_id, article, text_blog)
 values
-	('1', 'Про книгу.', 'Друзья, подождете чуть-чуть. Скоро появятся первые строки)')
+	('1', 'Про книгу.', 'Друзья, подождете чуть-чуть. Скоро появятся первые строки)');
 
 
 
